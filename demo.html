@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>input图片上传后获取图片信息,预览图和宽高</title>
+	<style>button{margin-top: 10px}</style>
+</head>
+<body>
+	<input type="file" id="imgInput" accept="image/*"><br>
+	<button id="message">查看图片信息</button>
+	<button id="preview">查看预览图</button>
+	<button id="heightWidth">查看图片宽高</button>
+	<img src='' id='previewImg' style="display: none">
+	<div id="fileMsg"></div>
+</body>
+<script>
+	window.onload = function(){
+		var previewImg = document.getElementById('previewImg');
+		var imgInput = document.getElementById('imgInput');
+		imgInput.addEventListener('change',getImg);
+		var message = document.getElementById('message');
+		message.addEventListener('click',showImgMsg);
+		var preview = document.getElementById('preview');
+		preview.addEventListener('click',showPreview);
+		var heightWidth = document.getElementById('heightWidth');
+		heightWidth.addEventListener('click',showHeightWidth);
+	};
+	var file = [];
+	//input的change事件函数
+	function getImg(e){
+		file = e.target.files[0];
+		console.log(file);
+	}
+	//显示图片信息
+	function showImgMsg(){
+		var fileSize = file.size;
+		var fileType = file.type;
+		var fileName = file.name;
+		document.getElementById('fileMsg').innerHTML = "图片文件名:"+
+		fileName+"<br>图片大小:"+fileSize/1024+"KB<br>图片格式:"+fileType;
+	}
+	//显示预览图
+	function showPreview(){
+		var reader = new FileReader();
+		reader.readAsDataURL(file);//异步请求获取图片base64
+		reader.onload = function(result){
+			var dataUrl = result.target.result;//图片base64数据
+			previewImg.src = dataUrl;
+			previewImg.style.display = 'block';
+		}
+	}
+	//获取图片宽高
+	function showHeightWidth(){
+		var reader = new FileReader();
+		reader.readAsDataURL(file);//异步请求获取图片base64
+		reader.onload = function(result){
+			var dataUrl = result.target.result;//图片base64数据
+			var image = new Image(); //
+			image.src = dataUrl;//异步,将图片的base64给实例化的image
+			image.onload = function(){
+				var width = this.width;
+				var height = this.height;
+				document.getElementById('fileMsg').innerHTML = "图片宽度:"+width+";图片高度:"+height;
+			}
+		}
+	}
+</script>
+</html>
